@@ -1,4 +1,4 @@
-import react from "react";
+import react, { useState } from "react";
 // import axios from 'axios';
 import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import { axiosWithAuth } from "./utils/axiosWithAuth";
@@ -10,14 +10,18 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
+  const [tokenid , setTokenid] = useState(localStorage.getItem('token'))
+
   const hadleLogout = () => {
     // axios.post('http://localhost:5000/api/logout',
     //     {headers: { Authorization: localStorage.getItem('token')}}
     //     ) 
-    axiosWithAuth('/logout')
-    .post()
+    axiosWithAuth()
+    .post('/logout')
     .then(res=>{ 
+      console.log('res',res)
      localStorage.removeItem('token') // remove token when the user logs out
+     setTokenid("")
     })
     .catch(err=>{ console.log(err)})
     }
@@ -33,13 +37,13 @@ function App() {
             <Link to='/logout' onClick ={hadleLogout}>Logout</Link>
             </li>
             <li>
-            {(localStorage.getItem('token') && <Link to='/friends'>Friends</Link>)}
+            {(tokenid && <Link to='/friends'>Friends</Link>)}
             </li>
         </ul>
 
         <Switch>
           <ProtectedRoute exact path ='/friends' component ={Friends} />
-          <Route exact path ='/login' component ={Login} />
+          <Route exact path ='/login' render = {(props)=>(<Login {...props} settoken = {setTokenid}/>)} />
           <Route exact path ='/logout' component ={Logout} />
         </Switch>
       </div>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { useHistory } from 'react-router-dom';
 import { axiosWithAuth } from '../utils/axiosWithAuth';
 
-function Login() {
+function Login(props) {
 const history = useHistory();
 const [credentials, setCredentials] = useState({ username: '', password: '' })
 const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +18,7 @@ const handleLogin = e => {
                 .then(res=>{ 
                 setIsLoading(true)
                 localStorage.setItem('token',res.data.payload) // save token
+                props.settoken(res.data.payload)
                 history.push('/friends') // redirect to 'friends' once the auth is successful
             })
                 .catch(err=>{ console.log(err)})
